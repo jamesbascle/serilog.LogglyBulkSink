@@ -37,11 +37,13 @@ namespace Serilog.LogglyBulkSink
                 {
                     try
                     {
-                        await httpClient.PostAsync(_logglyUrl, content);
+                        var response = await httpClient.PostAsync(_logglyUrl, content);
+                        response.EnsureSuccessStatusCode();
                     }
                     catch (Exception ex)
                     {
-                        Trace.WriteLine(string.Format("Exception posting to loggly {0}", ex));
+                        Trace.WriteLine($"Exception posting to loggly {ex}");
+                        Debugging.SelfLog.WriteLine($"Exception posting to loggly {ex}");
                     }
                 }
             }

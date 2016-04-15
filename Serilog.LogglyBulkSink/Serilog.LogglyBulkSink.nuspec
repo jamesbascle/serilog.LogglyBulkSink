@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
   <metadata>
-    <id>Serilog.LogglyBulkSink</id>
+    <id>Serilog.LogglyBulk</id>
 	<version>$version$-prerelease</version>
 	<description>A high throughput Loggly sink for Serilog that utilizes the bulk HTTP endpoint.</description>
     <authors>Samir Ahmed and Contributors</authors>
