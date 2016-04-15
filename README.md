@@ -3,6 +3,11 @@
 A Bulk Http Loggly Sink for [Serilog](https://github.com/serilog/serilog)
 That supports upto 10000x more efficient logging to loggly by making use of the loggly bulk http endpoint.
 
+##Build
+
+[![Build status](https://ci.appveyor.com/api/projects/status/p3a6vkgfxqlypfnr?svg=true)](https://ci.appveyor.com/project/jamesbascle/serilog-logglybulksink)
+[![Build status](https://ci.appveyor.com/api/projects/status/p3a6vkgfxqlypfnr/branch/master?svg=true)](https://ci.appveyor.com/project/jamesbascle/serilog-logglybulksink/branch/master)
+
 ## Setup
 
 Install via nuget
