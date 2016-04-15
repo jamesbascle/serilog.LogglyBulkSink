@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Text;
 using FluentAssertions;
@@ -84,13 +86,13 @@ namespace Serilog.LogglyBulkSink.Tests
             packageStringTask.Wait();
             var packageString = packageStringTask.Result;
 
-            Assert.IsTrue(result.Count == 2);
-            Assert.IsTrue(result[1].Contains("LogglyDiagnostics"));
-            Assert.IsTrue(packageString.Contains("LogglyDiagnostics"));
+            (result.Count == 2).Should().BeTrue();
+            result[1].Contains("LogglyDiagnostics").Should().BeTrue();
+            packageString.Contains("LogglyDiagnostics").Should().BeTrue();
         }
 
         [TestMethod]
-        public void IncludeDiagnostics_WhenEnabled_DoesNotIncludeDiagnosticsEvent()
+        public void IncludeDiagnostics_WhenDisbled_DoesNotIncludeDiagnosticsEvent()
         {
             var logEvent = new LogEvent(DateTimeOffset.UtcNow,
                 LogEventLevel.Debug, null, new MessageTemplate(Enumerable.Empty<MessageTemplateToken>()), new[]
@@ -105,8 +107,60 @@ namespace Serilog.LogglyBulkSink.Tests
             packageStringTask.Wait();
             var packageString = packageStringTask.Result;
 
-            Assert.IsTrue(result.Count == 1);
-            Assert.IsTrue(!packageString.Contains("LogglyDiagnostics"));
+            (result.Count == 1).Should().BeTrue();
+            packageString.Contains("LogglyDiagnostics").Should().BeFalse();
         }
+
+        [TestMethod]
+        [TestCategory( "Integration")]
+        public void WhenInvalidApiKeyProvided_OnSinkSend_TraceAndSerilogSelfLogPopulated()
+        {
+            var serilogSelfLogWriter = new StringWriter();
+            Debugging.SelfLog.Out = serilogSelfLogWriter;
+
+            var traceWriter = new StringWriter();
+            Trace.Listeners.Add(new TextWriterTraceListener(traceWriter));
+
+            var logger = new LoggerConfiguration()
+                .WriteTo.LogglyBulk("!!FAKE KEY!!", new[] {"!!FAKE TAG!!"}).CreateLogger();
+
+            logger.Fatal("!!FAKE MESSAGE!!");
+
+            (logger as IDisposable).Dispose();
+
+            var traceResult = traceWriter.ToString();
+            string.IsNullOrWhiteSpace(traceResult).Should().BeFalse();
+
+            var selfLogResult = serilogSelfLogWriter.ToString();
+            string.IsNullOrWhiteSpace(selfLogResult).Should().BeFalse();
+
+            traceResult.Contains(
+                "Exception posting to loggly System.Net.Http.HttpRequestException: Response status code does not indicate success")
+                .Should()
+                .BeTrue();
+
+            selfLogResult.Contains(
+                "Exception posting to loggly System.Net.Http.HttpRequestException: Response status code does not indicate success")
+                .Should()
+                .BeTrue();
+
+            Console.WriteLine(traceResult);
+            Console.WriteLine(selfLogResult);
+        }
+
+        [TestMethod]
+        [TestCategory("Integration")]
+        public void WhenInvalidApiKeyProvided_AndSelfLogOrTraceIsNotConfigured_EverythingIsOkay()
+        {
+            Trace.Listeners.Clear();
+            Serilog.Debugging.SelfLog.Out = null;
+            var logger = new LoggerConfiguration()
+                .WriteTo.LogglyBulk("!!FAKE KEY!!", new[] { "!!FAKE TAG!!" }).CreateLogger();
+
+            logger.Fatal("!!FAKE MESSAGE!!");
+
+            (logger as IDisposable).Dispose();
+        }
+
     }
 }
