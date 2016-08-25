@@ -7,6 +7,10 @@ That supports upto 10000x more efficient logging to loggly by making use of the 
 
 [![Build status](https://ci.appveyor.com/api/projects/status/p3a6vkgfxqlypfnr/branch/master?svg=true)](https://ci.appveyor.com/project/jamesbascle/serilog-logglybulksink/branch/master)
 
+##News
+
+8-24-2016 Release v1.0 and upgrading to Serilog 2.0!
+
 ## Setup
 
 Install via nuget
