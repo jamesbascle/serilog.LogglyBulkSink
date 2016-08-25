@@ -26,7 +26,10 @@ namespace Serilog.LogglyBulkSink
             TimeSpan? period = null,
             bool includeDiagnostics = false)
         {
-            if (lc == null) throw new ArgumentNullException("lc");
+            if (lc == null)
+            {
+                throw new ArgumentNullException(nameof(lc), "Must provide a LoggerSinkConfiguration to work on!");
+            }
 
             var frequency = period ?? TimeSpan.FromSeconds(30);
 

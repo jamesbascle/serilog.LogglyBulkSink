@@ -42,14 +42,15 @@ namespace Serilog.LogglyBulkSink.Tests
                 "{'fruit': 'banana'}",
             }.ToList();
 
-            var noDiagContent = LogglySink.PackageContent(jsons, Encoding.UTF8.GetByteCount(string.Join("\n", jsons)), 0, false);
+            //changing to remove diagnostics parameter to show that the default version is false, and that this test ensures backwards API compatibility. Don't add it back w/o cutting major version!
+            var noDiagContent = LogglySink.PackageContent(jsons, Encoding.UTF8.GetByteCount(string.Join("\n", jsons)), 0); 
             var stringContent = LogglySink.PackageContent(jsons, Encoding.UTF8.GetByteCount(string.Join("\n", jsons)), 0, true);
             stringContent.Should().NotBeNull();
             noDiagContent.Should().NotBeNull();
             var result = stringContent.ReadAsStringAsync().GetAwaiter().GetResult();
             var resultNoDiag = noDiagContent.ReadAsStringAsync().GetAwaiter().GetResult();
-            result.Split('\n').Count().Should().Be(4);
-            resultNoDiag.Split('\n').Count().Should().Be(3);
+            result.Split('\n').Length.Should().Be(4);
+            resultNoDiag.Split('\n').Length.Should().Be(3);
         }
 
         [TestMethod]
@@ -126,7 +127,7 @@ namespace Serilog.LogglyBulkSink.Tests
 
             logger.Fatal("!!FAKE MESSAGE!!");
 
-            (logger as IDisposable).Dispose();
+            logger.Dispose();
 
             var traceResult = traceWriter.ToString();
             string.IsNullOrWhiteSpace(traceResult).Should().BeFalse();
@@ -153,13 +154,13 @@ namespace Serilog.LogglyBulkSink.Tests
         public void WhenInvalidApiKeyProvided_AndSelfLogOrTraceIsNotConfigured_EverythingIsOkay()
         {
             Trace.Listeners.Clear();
-            Serilog.Debugging.SelfLog.Disable();
+            Debugging.SelfLog.Disable();
             var logger = new LoggerConfiguration()
                 .WriteTo.LogglyBulk("!!FAKE KEY!!", new[] { "!!FAKE TAG!!" }).CreateLogger();
 
             logger.Fatal("!!FAKE MESSAGE!!");
 
-            (logger as IDisposable).Dispose();
+            logger.Dispose();
         }
 
     }
