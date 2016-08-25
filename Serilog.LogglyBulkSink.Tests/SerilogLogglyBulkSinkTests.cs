@@ -116,7 +116,7 @@ namespace Serilog.LogglyBulkSink.Tests
         public void WhenInvalidApiKeyProvided_OnSinkSend_TraceAndSerilogSelfLogPopulated()
         {
             var serilogSelfLogWriter = new StringWriter();
-            Debugging.SelfLog.Out = serilogSelfLogWriter;
+            Debugging.SelfLog.Enable(serilogSelfLogWriter);
 
             var traceWriter = new StringWriter();
             Trace.Listeners.Add(new TextWriterTraceListener(traceWriter));
@@ -153,7 +153,7 @@ namespace Serilog.LogglyBulkSink.Tests
         public void WhenInvalidApiKeyProvided_AndSelfLogOrTraceIsNotConfigured_EverythingIsOkay()
         {
             Trace.Listeners.Clear();
-            Serilog.Debugging.SelfLog.Out = null;
+            Serilog.Debugging.SelfLog.Disable();
             var logger = new LoggerConfiguration()
                 .WriteTo.LogglyBulk("!!FAKE KEY!!", new[] { "!!FAKE TAG!!" }).CreateLogger();
 

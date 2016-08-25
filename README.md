@@ -21,7 +21,7 @@ Install-Package Serilog.LogglyBulk
  var tags = new []{"PROD", "MyCoolApp"};
  var logger = new LoggerConfiguration()
       .MinimumLevel.Verbose()
-      .WriteTo.Loggly(logglyKey, tags, batchPostingLimit: 10000, period: TimeSpan.FromSeconds(10))
+      .WriteTo.LogglyBulk(logglyKey, tags, batchPostingLimit: 10000, period: TimeSpan.FromSeconds(10))
       .CreateLogger();
 
 ```
