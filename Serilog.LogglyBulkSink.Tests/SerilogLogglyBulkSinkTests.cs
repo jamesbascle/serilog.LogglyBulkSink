@@ -1,21 +1,21 @@
-﻿using System;
+﻿using FluentAssertions;
+using Newtonsoft.Json;
+using Serilog.Debugging;
+using Serilog.Events;
+using Serilog.Parsing;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
-using FluentAssertions;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Newtonsoft.Json;
-using Serilog.Events;
-using Serilog.Parsing;
+using Xunit;
 
 namespace Serilog.LogglyBulkSink.Tests
 {
-    [TestClass]
     public class SerilogLogglyBulkSinkTests
     {
-        [TestMethod]
+        [Fact]
         public void TestAddIfContains()
         {
             var dictionary = new Dictionary<string, string>()
@@ -32,7 +32,7 @@ namespace Serilog.LogglyBulkSink.Tests
             dictionary["newkey"].Should().Be("orange");
         }
 
-        [TestMethod]
+        [Fact]
         public void PackageContentsTest()
         {
             var jsons = new[]
@@ -53,7 +53,7 @@ namespace Serilog.LogglyBulkSink.Tests
             resultNoDiag.Split('\n').Length.Should().Be(3);
         }
 
-        [TestMethod]
+        [Fact]
         public void TestRender()
         {
             var logEvent = new LogEvent(DateTimeOffset.UtcNow,
@@ -71,7 +71,7 @@ namespace Serilog.LogglyBulkSink.Tests
             (json["key"].Value as string).Should().Be("value");
         }
 
-        [TestMethod]
+        [Fact]
         public void IncludeDiagnostics_WhenEnabled_IncludesDiagnosticsEvent()
         {
             var logEvent = new LogEvent(DateTimeOffset.UtcNow,
@@ -92,7 +92,7 @@ namespace Serilog.LogglyBulkSink.Tests
             packageString.Contains("LogglyDiagnostics").Should().BeTrue();
         }
 
-        [TestMethod]
+        [Fact]
         public void IncludeDiagnostics_WhenDisbled_DoesNotIncludeDiagnosticsEvent()
         {
             var logEvent = new LogEvent(DateTimeOffset.UtcNow,
@@ -112,12 +112,13 @@ namespace Serilog.LogglyBulkSink.Tests
             packageString.Contains("LogglyDiagnostics").Should().BeFalse();
         }
 
-        [TestMethod]
-        [TestCategory( "Integration")]
+        [Fact]
+        [Trait("Category", "Integration")]
         public void WhenInvalidApiKeyProvided_OnSinkSend_TraceAndSerilogSelfLogPopulated()
         {
             var serilogSelfLogWriter = new StringWriter();
-            Debugging.SelfLog.Enable(serilogSelfLogWriter);
+
+            SelfLog.Enable(serilogSelfLogWriter);
 
             var traceWriter = new StringWriter();
             Trace.Listeners.Add(new TextWriterTraceListener(traceWriter));
@@ -129,28 +130,19 @@ namespace Serilog.LogglyBulkSink.Tests
 
             logger.Dispose();
 
-            var traceResult = traceWriter.ToString();
-            string.IsNullOrWhiteSpace(traceResult).Should().BeFalse();
-
             var selfLogResult = serilogSelfLogWriter.ToString();
             string.IsNullOrWhiteSpace(selfLogResult).Should().BeFalse();
-
-            traceResult.Contains(
-                "Exception posting to loggly System.Net.Http.HttpRequestException: Response status code does not indicate success")
-                .Should()
-                .BeTrue();
 
             selfLogResult.Contains(
                 "Exception posting to loggly System.Net.Http.HttpRequestException: Response status code does not indicate success")
                 .Should()
                 .BeTrue();
 
-            Console.WriteLine(traceResult);
             Console.WriteLine(selfLogResult);
         }
 
-        [TestMethod]
-        [TestCategory("Integration")]
+        [Fact]
+        [Trait("Category", "Integration")]
         public void WhenInvalidApiKeyProvided_AndSelfLogOrTraceIsNotConfigured_EverythingIsOkay()
         {
             Trace.Listeners.Clear();
@@ -162,6 +154,5 @@ namespace Serilog.LogglyBulkSink.Tests
 
             logger.Dispose();
         }
-
     }
 }

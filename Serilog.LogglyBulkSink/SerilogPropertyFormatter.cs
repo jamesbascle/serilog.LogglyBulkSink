@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using Serilog.Events;
+using Serilog.Debugging;
 
 namespace Serilog.LogglyBulkSink
 {
@@ -41,7 +42,8 @@ namespace Serilog.LogglyBulkSink
                     var key = SimplifyScalar(element.Key.Value);
                     if (result.ContainsKey(key))
                     {
-                        Trace.WriteLine($"The key {element.Key} is not unique in the provided dictionary after simplification to {key}.");
+                        SelfLog.WriteLine($"The key {element.Key} is not unique in the provided dictionary after simplification to {key}.");
+
                         return dict.Elements.Select(e => new Dictionary<string, object>
                         {
                             {"Key", SimplifyScalar(e.Key.Value)},
