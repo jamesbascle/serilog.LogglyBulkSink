@@ -1,13 +1,13 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using Serilog.Debugging;
+using Serilog.Events;
+using Serilog.Sinks.PeriodicBatching;
+using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
-using Newtonsoft.Json;
-using Serilog.Events;
-using Serilog.Sinks.PeriodicBatching;
 
 namespace Serilog.LogglyBulkSink
 {
@@ -42,8 +42,7 @@ namespace Serilog.LogglyBulkSink
                     }
                     catch (Exception ex)
                     {
-                        Trace.WriteLine($"Exception posting to loggly {ex}");
-                        Debugging.SelfLog.WriteLine($"Exception posting to loggly {ex}");
+                        SelfLog.WriteLine($"Exception posting to loggly {ex}");
                     }
                 }
             }
@@ -132,7 +131,7 @@ namespace Serilog.LogglyBulkSink
             }
             catch (Exception ex)
             {
-                Trace.WriteLine($"Error extracting json from logEvent {ex}");
+                SelfLog.WriteLine($"Error extracting json from logEvent {ex}");
             }
             return null;
         }
