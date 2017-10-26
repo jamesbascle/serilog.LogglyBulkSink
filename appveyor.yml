@@ -18,6 +18,8 @@ dotnet_csproj:
   assembly_version: '{version}'
   file_version: '{version}'
   informational_version: '{version}'
+test_script:
+  - vstest.console /logger:Appveyor Serilog.LogglyBulkSink.Tests.dll
 install:
 - cmd: PATH=C:\Program Files (x86)\MSBuild\14.0\Bin;%PATH%
 build_script:
