@@ -41,10 +41,7 @@ namespace Serilog.LogglyBulkSink
                     var key = SimplifyScalar(element.Key.Value);
                     if (result.ContainsKey(key))
                     {
-                        Trace.WriteLine(
-                            string.Format(
-                                "The key {0} is not unique in the provided dictionary after simplification to {1}.",
-                                element.Key, key));
+                        Trace.WriteLine($"The key {element.Key} is not unique in the provided dictionary after simplification to {key}.");
                         return dict.Elements.Select(e => new Dictionary<string, object>
                         {
                             {"Key", SimplifyScalar(e.Key.Value)},

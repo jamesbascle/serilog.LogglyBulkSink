@@ -86,7 +86,7 @@ namespace Serilog.LogglyBulkSink
                 var diagnostic = JsonConvert.SerializeObject(new
                 {
                     Event = "LogglyDiagnostics",
-                    Trace = string.Format("EventCount={0}, ByteCount={1}, PageCount={2}", jsons.Count, bytes, page)
+                    Trace = $"EventCount={jsons.Count}, ByteCount={bytes}, PageCount={page}"
                 });
                 jsons.Add(diagnostic);
             }
@@ -98,7 +98,7 @@ namespace Serilog.LogglyBulkSink
         {
             if (logEvent == null)
             {
-                throw new ArgumentNullException("logEvent");
+                throw new ArgumentNullException(nameof(logEvent));
             }
 
             var payload = new Dictionary<string, object>();
@@ -132,7 +132,7 @@ namespace Serilog.LogglyBulkSink
             }
             catch (Exception ex)
             {
-                Trace.WriteLine(string.Format("Error extracting json from logEvent {0}",ex));
+                Trace.WriteLine($"Error extracting json from logEvent {ex}");
             }
             return null;
         }
