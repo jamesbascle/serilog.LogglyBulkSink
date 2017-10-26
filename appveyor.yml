@@ -1,0 +1,23 @@
+version: 1.0.0.{build}
+image: Visual Studio 2017
+configuration: Release
+platform: Any CPU
+assembly_info:
+  patch: true
+  file: '**\AssemblyInfo.*'
+  assembly_version: '{version}'
+  assembly_file_version: '{version}'
+  assembly_informational_version: '{version}'
+dotnet_csproj:
+  patch: true
+  file: '**\*.csproj'
+  version: '{version}'
+  package_version: '{version}'
+  assembly_version: '{version}'
+  file_version: '{version}'
+  informational_version: '{version}'
+install:
+- cmd: PATH=C:\Program Files (x86)\MSBuild\14.0\Bin;%PATH%
+build_script:
+- ps: dotnet build -c Release
+deploy: off

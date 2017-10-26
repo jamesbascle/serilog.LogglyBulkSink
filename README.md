@@ -12,7 +12,7 @@ That supports upto 10000x more efficient logging to loggly by making use of the 
 
 Install via nuget
 ```
-Install-Package Serilog.LogglyBulk
+Install-Package Serilog.LogglyBulkSink
 ```
 
 ## Usage
