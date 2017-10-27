@@ -18,10 +18,13 @@ dotnet_csproj:
   assembly_version: '{version}'
   file_version: '{version}'
   informational_version: '{version}'
+test:
+  assemblies:
+    only:
+      - '**\*.tests.dll'
+
 test_script:
-  - vstest.console /logger:Appveyor Serilog.LogglyBulkSink.Tests.dll
-install:
-- cmd: PATH=C:\Program Files (x86)\MSBuild\14.0\Bin;%PATH%
+  - nunit3-console Serilog.LogglyBulkSink.Tests.dll --result=myresults.xml;format=AppVeyor 
 build_script:
-- ps: dotnet build -c Release
+  - ps: dotnet build -c Release
 deploy: off
