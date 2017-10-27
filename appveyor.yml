@@ -24,7 +24,7 @@ test:
       - '**\*.tests.dll'
 
 test_script:
-  - nunit3-console **\Serilog.LogglyBulkSink.Tests.dll --result=myresults.xml;format=AppVeyor 
+  - nunit3-console <assembly> --result=myresults.xml;format=AppVeyor
 build_script:
   - ps: dotnet build -c Release
 deploy: off
